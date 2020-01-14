@@ -126,18 +126,20 @@ function addEmp(){
         ])
         .then(function(answer){
             let role = answer.role
+            let managerID;
             for(var i = 0; i < res.length; i++){
                 if(role == res[i].title){
                     role = res[i].id;
+                    managerID = res[i].manager_id;
                 }
             }
 
-            addEmp2(role);
+            addEmp2(role, managerID);
         })
     })
 }
 // get the rest of the information needed to create employee
-function addEmp2(role){
+function addEmp2(role, managerID){
 
     inquirer
     .prompt([
@@ -162,7 +164,7 @@ function addEmp2(role){
           first_name: answer.fName,
           last_name: answer.lName,
           role_id: role,
-          manager_id: 111
+          manager_id: managerID
         },
         function(err) {
           if (err) throw err;
