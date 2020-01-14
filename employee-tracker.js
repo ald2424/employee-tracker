@@ -1,13 +1,14 @@
 /*
 ************ TO DO *********************
------ Fix manager id when adding employees
+
 ----- Add functions to modify current employee's roles
 ----- When adding roles, prompt user to either enter a new employee or modify a current employee to switch to that role
       but only if there is more than one employee in the role that the employee currently works for
 ----- Add functions to view employees and their roles by department
 ----- Add functions to view the salary cap for the departments
------ Add manager table
 ----- view employee's by manager
+----- Update employee to manager
+----- figure out how to use table npm
 */
 
 var mysql = require("mysql");
@@ -34,7 +35,8 @@ function start() {
         name: "task",
         type: "list",
         message: "Would you like to do?",
-        choices: ["view employees", "view managers", "view departments", "view roles", "add employee", "add department", "add role", "EXIT"]
+        choices: ["view employees", "view managers", "view departments", "view roles", "add employee", "add department", "add role",
+                    "update employee roll", "EXIT"]
       })
       .then(function(answer) {
         
@@ -59,6 +61,9 @@ function start() {
                 break;
             case "add role":
                 addRole();
+                break;
+            case "update employee roll":
+                updateEmp();
                 break;
             case "EXIT":
                 connection.end();
@@ -281,3 +286,86 @@ function addRole(){
     });
     }
 // *************************************************************************************************************
+
+// ******************************** Update tables******************************************************************
+
+// update role_id
+function updateEmp(){
+    // Select employee to update
+    // select out of availble roles
+    // modify employee's data to update role_id
+    connection.query("SELECT * FROM employee", function(err, res){
+        if(err) throw err;
+
+        inquirer
+        .prompt([
+            {
+                name: "emp",
+                type: "list",
+                message: "Which Employee is being modified?",
+                choices: function() {
+                    var choiceArray = [];
+                    for (var i = 0; i < res.length; i++) {
+                      choiceArray.push(res[i].first_name + " " + res[i].last_name);
+                    }
+                    return choiceArray;
+                  }
+              }
+        ])
+        .then(function(answer){
+            let emp = answer.emp
+            let empId;
+            for(var i = 0; i < res.length; i++){
+                if(emp == (res[i].first_name + " " + res[i].last_name)){
+                    empId = res[i].id;
+                }
+            }
+            
+            updateEmp2(empId);
+        })
+    })
+}
+
+function updateEmp2(empId){
+    connection.query("SELECT * FROM role", function(err, res){
+        if(err) throw err;
+
+        inquirer
+        .prompt([
+            {
+                name: "role",
+                type: "list",
+                message: "Please select the Employee's new role",
+                choices: function() {
+                    var choiceArray = [];
+                    for (var i = 0; i < res.length; i++) {
+                      choiceArray.push(res[i].title);
+                    }
+                    return choiceArray;
+                  }
+              }
+        ])
+        .then(function(answer){
+            let role = answer.role
+            let roleId;
+            for(var i = 0; i < res.length; i++){
+                if(role == res[i].title){
+                    roleId = res[i].id;
+                }
+            }
+            console.log("EmpID from function 2 " + empId);
+            updateEmp3(empId, roleId);
+        })
+    })
+}
+
+function updateEmp3(empId, roleId){
+    connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [roleId, empId], function(err, res){
+        if(err) throw err;
+
+        console.log("This employee's role has been updated!");
+
+        start();
+    })
+}
+// **********************************************************************************************************************
