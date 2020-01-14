@@ -1,5 +1,6 @@
 /*
 ************ TO DO *********************
+----- Fix manager id when adding employees
 ----- Add functions to modify current employee's roles
 ----- When adding roles, prompt user to either enter a new employee or modify a current employee to switch to that role
       but only if there is more than one employee in the role that the employee currently works for
@@ -94,7 +95,7 @@ function start() {
 
 // prompt user to enter the department to add role_id to employee table
 function addEmp(){
-    connection.query("SELECT * FROM department", function(err, res){
+    connection.query("SELECT * FROM role", function(err, res){
         if(err) throw err;
 
         inquirer
@@ -106,7 +107,7 @@ function addEmp(){
                 choices: function() {
                     var choiceArray = [];
                     for (var i = 0; i < res.length; i++) {
-                      choiceArray.push(res[i].name);
+                      choiceArray.push(res[i].title);
                     }
                     return choiceArray;
                   }
@@ -115,7 +116,7 @@ function addEmp(){
         .then(function(answer){
             let role = answer.role
             for(var i = 0; i < res.length; i++){
-                if(role == res[i].name){
+                if(role == res[i].title){
                     role = res[i].id;
                 }
             }
@@ -144,7 +145,6 @@ function addEmp2(role){
 
     .then(function(answer) {
       
-        
       connection.query(
         "INSERT INTO employee SET ?",
         {
@@ -196,6 +196,7 @@ function addDep(){
     })
 }
 
+// Gets department that the role will belong to
 function addRole(){
     
         connection.query("SELECT * FROM department", function(err, res){
@@ -229,6 +230,7 @@ function addRole(){
         })
     }
 
+// Gets the rest of the info to create the role
     function addRole2(department){
 
         inquirer
