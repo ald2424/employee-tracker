@@ -4,28 +4,13 @@ var table = require('console.table');
 
 var connection = mysql.createConnection({
   host: "localhost",
-
-  // Your port; if not 3306
   port: 3306,
-
-  // Your username
   user: "root",
-
-  // Your password
   password: "Marie2009",
   database: "employee_db"
 });
 
 connection.connect(function(err) {
-    // if (err) throw err;
-    // console.log("connected: " + connection.threadId);
-    // connection.query("SELECT * FROM employee", function(err, res) {
-    //     if (err) throw err;
-    
-    //     // Log all results of the SELECT statement
-    //     console.table(res);
-    //     connection.end();
-//   });
 
     start();
 });
@@ -36,11 +21,10 @@ function start() {
       .prompt({
         name: "task",
         type: "list",
-        message: "Would you like to do? [view employees], [view departments], [view rolls]?",
-        choices: ["view employees", "view departments", "view rolls", "EXIT"]
+        message: "Would you like to do?",
+        choices: ["view employees", "view departments", "view rolls", "add employee", "add department", "add roll", "EXIT"]
       })
       .then(function(answer) {
-        // based on their answer, either call the bid or the post functions
         
         switch (answer.task){
             case "view employees":
@@ -52,6 +36,15 @@ function start() {
             case "view rolls":
                 viewRolls();
                 break;
+            case "add employee":
+                addEmp();
+                break;
+            case "add department":
+                addDep();
+                break;
+            case "add roll":
+                addRoll();
+                break;
             case "EXIT":
                 connection.end();
                 break;
@@ -59,11 +52,10 @@ function start() {
       });
   }
 
+//   ****************************** Functions to View Tables************************************************
   function viewEmps(){
     connection.query("SELECT * FROM employee", function(err, res) {
             if (err) throw err;
-        
-            // Log all results of the SELECT statement
             console.table(res);
             start();
       });
@@ -72,8 +64,6 @@ function start() {
   function viewDeps(){
     connection.query("SELECT * FROM department", function(err, res) {
             if (err) throw err;
-        
-            // Log all results of the SELECT statement
             console.table(res);
             start();
       });
@@ -82,10 +72,120 @@ function start() {
   function viewRolls(){
     connection.query("SELECT * FROM roll", function(err, res) {
             if (err) throw err;
-        
-            // Log all results of the SELECT statement
             console.table(res);
             start();
       });
   }
-  
+
+//   **********************************************************************************************************
+
+// **********************Functions to add to tables*************************************************************
+
+// prompt user to enter the department to add roll_id to employee table
+function addEmp(){
+    connection.query("SELECT * FROM department", function(err, res){
+        if(err) throw err;
+
+        inquirer
+        .prompt([
+            {
+                name: "roll",
+                type: "list",
+                message: "What is the employee's roll?",
+                choices: function() {
+                    var choiceArray = [];
+                    for (var i = 0; i < res.length; i++) {
+                      choiceArray.push(res[i].name);
+                    }
+                    return choiceArray;
+                  }
+              }
+        ])
+        .then(function(answer){
+            let roll = answer.roll
+            for(var i = 0; i < res.length; i++){
+                if(roll == res[i].name){
+                    roll = res[i].id;
+                }
+            }
+
+            addEmp2(roll);
+        })
+    })
+}
+// get the rest of the information needed to create employee
+function addEmp2(roll){
+
+    inquirer
+    .prompt([
+      {
+        name: "fName",
+        type: "input",
+        message: "Enter the Employee's first name: "
+      },
+      {
+        name: "lName",
+        type: "input",
+        message: "Enter the Employee's last name:"
+      }
+    
+    ])
+
+    .then(function(answer) {
+      // when finished prompting, insert a new item into the db with that info
+        
+      connection.query(
+        "INSERT INTO employee SET ?",
+        {
+          first_name: answer.fName,
+          last_name: answer.lName,
+          roll_id: roll,
+          manager_id: 111
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("The employee was successfully added!");
+          
+          
+          start();
+        })
+});
+}
+
+
+
+
+function addDep(){
+    
+    inquirer
+    .prompt({
+       name: "depName",
+       type: "input",
+       message: "Enter the name of the department" 
+    })
+
+    .then(function(answer){
+        
+        connection.query("INSERT INTO department SET ?",
+        {
+            name: answer.depName
+        })
+        
+        connection.query("SELECT * FROM department", function(err, res){
+            if(err) throw err;
+
+            for(var i = 0; i < res.length; i++){
+                if(res[i].name == answer.depName){
+                    console.log("You successfully added a new deparment called " + res[i].name + "\n");
+                    console.log("The department id is: " + res[i].id);
+                }
+            }
+            start();
+        })
+    })
+}
+
+function addRoll(){
+
+}
+// *************************************************************************************************************
