@@ -81,7 +81,7 @@ function start() {
   }
 
   function viewRoles(){
-    connection.query("SELECT * FROM roll", function(err, res) {
+    connection.query("SELECT * FROM role", function(err, res) {
             if (err) throw err;
             console.table(res);
             start();
@@ -92,7 +92,7 @@ function start() {
 
 // **********************Functions to add to tables*************************************************************
 
-// prompt user to enter the department to add roll_id to employee table
+// prompt user to enter the department to add role_id to employee table
 function addEmp(){
     connection.query("SELECT * FROM department", function(err, res){
         if(err) throw err;
@@ -150,7 +150,7 @@ function addEmp2(role){
         {
           first_name: answer.fName,
           last_name: answer.lName,
-          roll_id: role,
+          role_id: role,
           manager_id: 111
         },
         function(err) {
@@ -250,7 +250,7 @@ function addRole(){
           
             
           connection.query(
-            "INSERT INTO roll SET ?",
+            "INSERT INTO role SET ?",
             {
               title: answer.title,
               salary: answer.salary,
