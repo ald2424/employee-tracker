@@ -1,9 +1,6 @@
 /*
 ************ TO DO *********************
-
------ Add functions to modify current employee's roles
------ When adding roles, prompt user to either enter a new employee or modify a current employee to switch to that role
-      but only if there is more than one employee in the role that the employee currently works for
+----- Add manager ID to add role
 ----- Add functions to view employees and their roles by department
 ----- Add functions to view the salary cap for the departments
 ----- view employee's by manager
@@ -353,7 +350,7 @@ function updateEmp2(empId){
                     roleId = res[i].id;
                 }
             }
-            console.log("EmpID from function 2 " + empId);
+            
             updateEmp3(empId, roleId);
         })
     })
@@ -363,7 +360,7 @@ function updateEmp3(empId, roleId){
     connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [roleId, empId], function(err, res){
         if(err) throw err;
 
-        console.log("This employee's role has been updated!");
+        console.log("This employee's role has been updated! \n");
 
         start();
     })
