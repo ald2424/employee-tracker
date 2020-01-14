@@ -34,13 +34,16 @@ function start() {
         name: "task",
         type: "list",
         message: "Would you like to do?",
-        choices: ["view employees", "view departments", "view roles", "add employee", "add department", "add role", "EXIT"]
+        choices: ["view employees", "view managers", "view departments", "view roles", "add employee", "add department", "add role", "EXIT"]
       })
       .then(function(answer) {
         
         switch (answer.task){
             case "view employees":
                 viewEmps();
+                break;
+            case "view managers":
+                viewMan();
                 break;
             case "view departments":
                 viewDeps();
@@ -71,6 +74,14 @@ function start() {
             console.table(res);
             start();
       });
+  }
+
+  function viewMan(){
+      connection.query("SELECT * FROM managers", function(err, res){
+          if(err) throw err;
+          console.table(res);
+          start();
+      })
   }
 
   function viewDeps(){
