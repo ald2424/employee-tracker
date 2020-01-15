@@ -211,8 +211,41 @@ function addDep(){
     })
 }
 
-// Gets department that the role will belong to
+// Get the Manager for the new role
 function addRole(){
+connection.query("SELECT * FROM managers", function(err, res){
+    if(err) throw err;
+
+    inquirer
+    .prompt([
+        {
+            name: "manager",
+            type: "list",
+            message: "Select a Manager for the new role: ",
+            choices: function() {
+                var choiceArray = [];
+                for (var i = 0; i < res.length; i++) {
+                  choiceArray.push(res[i].first_name + " " + res[i].last_name);
+                }
+                return choiceArray;
+              }
+          }
+    ])
+    .then(function(answer){
+        let manager = answer.manager
+        let managerID;
+        for(var i = 0; i < res.length; i++){
+            if(manager == res[i].first_name + " " + res[i].last_name){
+                managerID = res[i].id;
+            }
+        }
+
+        addRole2(managerID);
+    })
+})
+}
+// Gets department that the role will belong to
+function addRole2(managerID){
     
         connection.query("SELECT * FROM department", function(err, res){
             if(err) throw err;
@@ -239,14 +272,14 @@ function addRole(){
                         department = res[i].id;
                     }
                 }
-    
-                addRole2(department);
+                console.log("The Manager ID is: " + managerID);
+                addRole3(department, managerID);
             })
         })
     }
 
 // Gets the rest of the info to create the role
-    function addRole2(department){
+    function addRole3(department, managerID){
 
         inquirer
         .prompt([
@@ -271,7 +304,8 @@ function addRole(){
             {
               title: answer.title,
               salary: answer.salary,
-              department_id: department
+              department_id: department,
+              manager_id: managerID
             },
             function(err) {
               if (err) throw err;
