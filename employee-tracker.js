@@ -1,13 +1,3 @@
-/*
-************ TO DO *********************
------ Add manager ID to add role
------ Add functions to view employees and their roles by department
------ Add functions to view the salary cap for the departments
------ view employee's by manager
------ Update employee to manager
------ figure out how to use table npm
-*/
-
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var table = require('console.table');
