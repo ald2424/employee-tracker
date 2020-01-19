@@ -13,3 +13,6 @@ Adding a Role:
 
 Adding an Employee:
 ![add-emp](https://github.com/ald2424/employee-tracker/blob/master/assets/addEmployee.gif)
+
+Updating an Employee Role:
+![update-emp](https://github.com/ald2424/employee-tracker/blob/master/assets/UpdateEmployee.gif)
