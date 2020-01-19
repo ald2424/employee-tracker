@@ -10,3 +10,6 @@ Adding Departments:
 
 Adding a Role:
 ![add-role](https://github.com/ald2424/employee-tracker/blob/master/assets/addRole.gif)
+
+Adding an Employee:
+![add-emp](https://github.com/ald2424/employee-tracker/blob/master/assets/addEmployee.gif)
